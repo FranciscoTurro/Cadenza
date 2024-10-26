@@ -4,10 +4,11 @@ import * as SplashScreen from 'expo-splash-screen';
 import { useEffect, useState } from 'react';
 import 'react-native-reanimated';
 import '@/styles/global.css';
-import { NAV_THEME } from '../lib/constants';
-import { useColorScheme } from '@/lib/useColorScheme';
+import { NAV_THEME } from '../theming/constants';
+import { useColorScheme } from '@/theming/useColorScheme';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { StatusBar } from 'expo-status-bar';
+import { ThemeToggle } from '../components/theme-toggle';
 
 const LIGHT_THEME: Theme = {
   dark: false,
@@ -58,7 +59,9 @@ export default function RootLayout() {
   return (
     <ThemeProvider value={isDarkColorScheme ? DARK_THEME : LIGHT_THEME}>
       <StatusBar style={isDarkColorScheme ? 'light' : 'dark'} />
-      <Slot />
+      <Stack
+        screenOptions={{ headerTitle: 'Cadenza', headerRight: ThemeToggle }}
+      />
     </ThemeProvider>
   );
 }

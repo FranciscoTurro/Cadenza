@@ -21,25 +21,19 @@ export default function HomeScreen() {
 
   const sound = useSound();
   const [bpm, setBpm] = useState(100);
-  const lastPlayedSoundAt = useRef(0);
   const [isPlaying, setIsPlaying] = useState(false);
 
   const msPerBeat = useCallback(() => (1 / bpm) * 60 * 1000, [bpm]);
 
   useEffect(() => {
-    let timeout: NodeJS.Timeout | undefined = undefined;
-    function loop() {
-      const nextSoundAt = msPerBeat() + lastPlayedSoundAt.current;
-      const timeUntilNextSound = Math.max(nextSoundAt - Date.now(), 0);
-      timeout = setTimeout(() => {
-        sound?.replayAsync();
-        lastPlayedSoundAt.current = Date.now();
-        loop();
-      }, timeUntilNextSound);
-    }
-    if (isPlaying) loop();
-    return () => clearTimeout(timeout);
-  }, [sound, bpm, isPlaying]);
+    if (!isPlaying || !sound) return;
+
+    const intervalId = setInterval(() => {
+      sound.replayAsync();
+    }, msPerBeat());
+
+    return () => clearInterval(intervalId);
+  }, [sound, msPerBeat, isPlaying]);
 
   return (
     <View className="flex w-full h-full items-center justify-start">
